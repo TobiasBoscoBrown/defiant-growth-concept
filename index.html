@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>document.documentElement.classList.add('js');</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Defiant Digital — Scale to Seven Figures (Concept LP)</title>
@@ -178,9 +179,22 @@
   .ribbon b{color:var(--accent)}
   .ribbon a{color:var(--text);text-decoration:underline;text-underline-offset:2px}
 
-  /* Reveal animation */
-  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
-  .reveal.in{opacity:1;transform:none}
+  /* Reveal animation (progressive enhancement: only hidden when JS is active) */
+  .js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+  .js .reveal.in{opacity:1;transform:none}
+  /* Hero animates in immediately on load via CSS, no scroll observer needed */
+  @keyframes heroIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  .js .hero .reveal{animation:heroIn .8s cubic-bezier(.2,.6,.2,1) both}
+  .js .hero .eyebrow.reveal{animation-delay:.05s}
+  .js .hero h1.reveal{animation-delay:.12s}
+  .js .hero .sub.reveal{animation-delay:.22s}
+  .js .hero .hero-cta.reveal{animation-delay:.32s}
+  .js .hero .trust.reveal{animation-delay:.42s}
+  .js .hero .collage.reveal{animation-delay:.2s}
+  @media (prefers-reduced-motion: reduce){
+    .js .reveal{opacity:1 !important;transform:none !important;transition:none}
+    .js .hero .reveal{animation:none}
+  }
 
   /* Responsive */
   @media(max-width:920px){
@@ -418,25 +432,4 @@
       var p = Math.min((now-start)/dur,1);
       var eased = 1-Math.pow(1-p,3);
       el.textContent = Math.round(target*eased)+suffix;
-      if(p<1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-  var sio = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){ if(e.isIntersecting){ animateStat(e.target); sio.unobserve(e.target);} });
-  },{threshold:.6});
-  document.querySelectorAll('.num').forEach(function(el){ sio.observe(el); });
-
-  // FAQ accordion
-  document.querySelectorAll('.q button').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var q = btn.parentElement;
-      var a = q.querySelector('.a');
-      var open = q.classList.contains('open');
-      document.querySelectorAll('.q').forEach(function(x){ x.classList.remove('open'); x.querySelector('.a').style.maxHeight=null; });
-      if(!open){ q.classList.add('open'); a.style.maxHeight = a.scrollHeight+'px'; }
-    });
-  });
-</script>
-</body>
-</html>
+      if(p<1) requestAnimationF
